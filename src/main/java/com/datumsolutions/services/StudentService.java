@@ -1,7 +1,6 @@
 package com.datumsolutions.services;
 
 import java.util.List;
-import java.util.UUID;
 
 import javax.ws.rs.NotFoundException;
 
@@ -17,7 +16,7 @@ public class StudentService {
 	@Autowired
     private RedisTemplate<String, Student> userTemplate;
 
-	private static final String REDIS_PREFIX_USERS = "users";
+	private static final String REDIS_PREFIX_STUDENTS = "students";
 
 	private static final String REDIS_KEYS_SEPARATOR = ":";
 
@@ -26,7 +25,7 @@ public class StudentService {
 	}
 
 	public Student findById(final String userId) {
-		final Student student = getValueOperations().get(getRedisKey(UUID.fromString(userId).toString()));
+		final Student student = getValueOperations().get((userId).toString());
 		if(student == null) {
 			throw new NotFoundException("User does not exist in the DB");
 		}
@@ -34,7 +33,6 @@ public class StudentService {
 	}
 
 	public void save(final Student student) {
-		student.setId(UUID.randomUUID().toString());
 		getValueOperations().set(getRedisKey(student.getId()), student);
 	}
 
@@ -44,13 +42,13 @@ public class StudentService {
 	}
 
 	public void delete(final String userId) {
-		if(!userTemplate.delete(getRedisKey(UUID.fromString(userId).toString()))) {
+		if(!userTemplate.delete(getRedisKey((userId).toString()))) {
 			throw new NotFoundException("User does not exist in the DB");
 		}
 	}
 
 	private String getRedisKey(final String userId) {
-        return REDIS_PREFIX_USERS + REDIS_KEYS_SEPARATOR + userId;
+        return REDIS_PREFIX_STUDENTS + REDIS_KEYS_SEPARATOR + userId;
     }
 
 	private ValueOperations<String, Student> getValueOperations() {
